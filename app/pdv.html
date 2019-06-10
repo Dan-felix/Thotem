@@ -1,0 +1,719 @@
+<!DOCTYPE html>
+
+<html>
+<head lang="PT">
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    
+    <link rel='shortcut icon' type='image/x-icon' href='../favicon.ico' />
+    <title>TOTEM</title>
+
+    <link href="../css/metro.css" rel="stylesheet">
+    <link href="../css/metro-icons.css" rel="stylesheet">
+    <link href="../css/metro-responsive.css" rel="stylesheet">
+
+    <script src="../js/jquery-2.1.3.min.js"></script>
+    <script src="../js/metro.js"></script>
+
+    <style>
+        
+        body {
+         overflow-x: hidden;   
+        }
+        
+        .tile-area-controls {
+            position: fixed;
+            right: 40px;
+            top: 40px;
+        }
+
+        .tile-group {
+            left: 100px;
+        }
+
+        .tile, .tile-small, .tile-sqaure, .tile-wide, .tile-large, .tile-big, .tile-super {
+            opacity: 0;
+            -webkit-transform: scale(.8);
+            transform: scale(.8);
+        }
+
+        #charmSettings .button {
+            margin: 5px;
+        }
+
+        .schemeButtons {
+            /*width: 300px;*/
+        }
+
+        @media screen and (max-width: 640px) {
+            .tile-area {
+                overflow-y: scroll;
+            }
+            .tile-area-controls {
+                display: none;
+            }
+        }
+
+        @media screen and (max-width: 320px) {
+            .tile-area {
+                overflow-y: scroll;
+            }
+
+            .tile-area-controls {
+                display: none;
+            }
+
+        }
+        
+            #pop{
+            display: none;
+            position:absolute;
+            top: 25%;
+            left: auto;
+            padding: 10px;
+            width: 300px;
+            height: 200px;
+            border: 1px solid #d0d0d0
+            }    
+            
+        }
+        
+    </style>
+
+    <script>
+         
+        (function($) {
+            $.StartScreen = function(){
+                var plugin = this;
+                var width = (window.innerWidth > 0) ? window.innerWidth : screen.width;
+
+                plugin.init = function(){
+                    setTilesAreaSize();
+                    if (width > 640) addMouseWheel();
+                };
+
+                var setTilesAreaSize = function(){
+                    var groups = $(".tile-group");
+                    var tileAreaWidth = 80;
+                    $.each(groups, function(i, t){
+                        if (width <= 640) {
+                            tileAreaWidth = width;
+                        } else {
+                            tileAreaWidth += $(t).outerWidth() + 80;
+                        }
+                    });
+                    $(".tile-area").css({
+                        width: tileAreaWidth
+                    });
+                };
+
+                var addMouseWheel = function (){
+                    $("body").mousewheel(function(event, delta, deltaX, deltaY){
+                        var page = $(document);
+                        var scroll_value = delta * 50;
+                        page.scrollLeft(page.scrollLeft() - scroll_value);
+                        return false;
+                    });
+                };
+
+                plugin.init();
+            }
+        })(jQuery);
+
+        $(function(){
+            $.StartScreen();
+
+            var tiles = $(".tile, .tile-small, .tile-sqaure, .tile-wide, .tile-large, .tile-big, .tile-super");
+
+            $.each(tiles, function(){
+                var tile = $(this);
+                setTimeout(function(){
+                    tile.css({
+                        opacity: 1,
+                        "-webkit-transform": "scale(1)",
+                        "transform": "scale(1)",
+                        "-webkit-transition": ".3s",
+                        "transition": ".3s"
+                    });
+                }, Math.floor(Math.random()*500));
+            });
+
+            $(".tile-group").animate({
+                left: 0
+            });
+        });
+
+        function showCharms(id){
+            var  charm = $(id).data("charm");
+            if (charm.element.data("opened") === true) {
+                charm.close();
+            } else {
+                charm.open();
+            }
+        }
+
+        function setSearchPlace(el){
+            var a = $(el);
+            var text = a.text();
+            var toggle = a.parents('label').children('.dropdown-toggle');
+
+            toggle.text(text);
+        }
+
+        $(function(){
+            var current_tile_area_scheme = localStorage.getItem('tile-area-scheme') || "tile-area-scheme-dark";
+            $(".tile-area").removeClass (function (index, css) {
+                return (css.match (/(^|\s)tile-area-scheme-\S+/g) || []).join(' ');
+            }).addClass(current_tile_area_scheme);
+
+            $(".schemeButtons .button").hover(
+                    function(){
+                        var b = $(this);
+                        var scheme = "tile-area-scheme-" +  b.data('scheme');
+                        $(".tile-area").removeClass (function (index, css) {
+                            return (css.match (/(^|\s)tile-area-scheme-\S+/g) || []).join(' ');
+                        }).addClass(scheme);
+                    },
+                    function(){
+                        $(".tile-area").removeClass (function (index, css) {
+                            return (css.match (/(^|\s)tile-area-scheme-\S+/g) || []).join(' ');
+                        }).addClass(current_tile_area_scheme);
+                    }
+            );
+
+            $(".schemeButtons .button").on("click", function(){
+                var b = $(this);
+                var scheme = "tile-area-scheme-" +  b.data('scheme');
+
+                $(".tile-area").removeClass (function (index, css) {
+                    return (css.match (/(^|\s)tile-area-scheme-\S+/g) || []).join(' ');
+                }).addClass(scheme);
+
+                current_tile_area_scheme = scheme;
+                localStorage.setItem('tile-area-scheme', scheme);
+
+                showSettings();
+            });
+        });
+
+    </script
+
+</head>
+<body>
+    
+    <section data-role="charm" id="charmTeam">
+        <h1 class="text-light">Equipes</h1>
+        <hr class="thin"/>
+        <br />
+        <section class="input-control text full-size">
+            <label>
+                <article class="dropdown-toggle drop-marker-light">Selecione</article>
+                <ul class="d-menu" data-role="dropdown">
+                    <li><a href="higs.html" onclick="setSearchPlace(this)">HIGS</a></li>
+                    <li><a href="front.html" onclick="setSearchPlace(this)">Front</a></li>
+                    <li><a href="fiscal.html" onclick="setSearchPlace(this)">Fiscal</a></li>
+                    <li><a href="back.html" onclick="setSearchPlace(this)">Back Office</a></li>
+                </ul>
+            </label>
+        </section>
+    </section>
+    
+    <section data-role="charm" id="charmSearch">
+        <h1 class="text-light">Pesquisar</h1>
+        <hr class="thin"/>
+        <br />
+        <section class="input-control text full-size">
+            <!--<input type="text" placeholder=" Digite sua busca">
+            <button class="button"><article class="mif-search"></article></button>-->    
+            <FORM method="GET" action="http://www.google.com.br/custom" target="_blank" >
+                <INPUT type="text" name="q" size="25" maxlength="255" value="" style="width:215px;" placeholder=" Digite sua busca" class="caixa"></INPUT>
+                <button type="submit" value="Pesquisar" class="button estilo mif-search"></button>
+            </FORM>
+        </section>
+    </section>
+
+    <section data-role="charm" id="charmSettings" data-position="top">
+        <h1 class="text-light">Cor de fundo</h1>
+        <hr class="thin"/>
+        <br />
+        <section class="schemeButtons">
+            <section class="button square-button tile-area-scheme-dark" data-scheme="dark"></section>
+            <section class="button square-button tile-area-scheme-darkCyan" data-scheme="darkCyan"></section>
+            <section class="button square-button tile-area-scheme-darkCobalt" data-scheme="darkCobalt"></section>
+            <section class="button square-button tile-area-scheme-darkTeal" data-scheme="darkTeal"></section>
+            <section class="button square-button tile-area-scheme-darkGreen" data-scheme="darkGreen"></section>
+            <section class="button square-button tile-area-scheme-darkBlue" data-scheme="darkBlue"></section>
+            <section class="button square-button tile-area-scheme-grayed" data-scheme="grayed"></section>
+            <section class="button square-button tile-area-scheme-white" data-scheme="white"></section>
+        </section>
+    </section>
+
+    <section class="tile-area tile-area-scheme-dark fg-white" style="height: 100%; max-height: 100% !important;">
+        
+        <h1 class="tile-area-title fg-cyan"><a href="index.html"><img src="../image/logototem.png" /></a></h1>
+        
+        <section class="tile-area-controls">
+           <button class="image-button icon-right bg-transparent fg-black bg-hover-dark no-border" onclick="showCharms('#charmTeam')"><article class="sub-header no-margin text-light" data-role="hint" data-hint-background="bg-darkCyan" data-hint-color="fg-white" data-hint-mode="" data-hint="Selecione a equipe">PDV & SPECIAL</article><article class="bg-darkCyan fg-white icon mif-user"></article></button>
+            
+           <!--<button class="square-button bg-grayLight fg-white bg-hover-dark no-border"><article class="icon mif-embed2" data-role="hint" data-hint-background="bg-darkCyan" data-hint-color="fg-white" data-hint-mode="2" data-hint="Develop: Daniel Felix "></article></button>-->
+            
+            <button class="square-button bg-gray fg-white bg-hover-dark no-border" onclick="showCharms('#charmSearch')"><article class="icon mif-search" data-role="hint" data-hint-background="bg-darkCyan" data-hint-color="fg-white" data-hint-mode="2" data-hint="Pesquisar"></article></button>
+            
+            <button class="square-button bg-darkOrange fg-white bg-hover-dark no-border" onclick="showCharms('#charmSettings')"><article class="icon mif-cog" data-role="hint" data-hint-background="bg-darkCyan" data-hint-color="fg-white" data-hint-mode="2" data-hint="Cor de fundo"></article></button>
+            
+            <!--<a href="#" class="square-button bg-darkRed fg-white bg-hover-dark no-border"><article class="icon mif-switch"></article></a>-->
+        </section>
+
+        <section class="tile-group triple">
+            <article class="tile-group-title fg-grayed">Ferramentas</article>
+
+            <section class="tile-container">
+    
+                <a href="https://fluig.totvs.com/portal/p/10097/home" class="tile bg-darkCyan fg-white" target="_blank">
+                    <section class="tile-content iconic">
+                        <article class="icon mif-organization"></article>
+                    </section>
+                    <article class="tile-label">Fluig CMNet</article>
+                </a>
+                
+                <a href="https://sncfinesse1.totvs.com.br" class="tile bg-darkCyan fg-white" target="_blank">
+                    <section class="tile-content iconic">
+                        <article class="icon mif-phone"></article>
+                    </section>
+                    <article class="tile-label">Finesse</article>
+                </a>
+                
+                <a href="https://totvssuporte.zendesk.com/agent" class="tile bg-darkCyan fg-white" target="_blank">
+                    <section class="tile-content iconic">
+                        <article class="icon mif-perm-phone-msg"></article>
+                    </section>
+                    <article class="tile-label">Zendesk</article>
+                </a>
+
+                <a href="https://rhonline.totvs.com.br" class="tile bg-darkCyan fg-white" target="_blank">
+                    <section class="tile-content iconic">
+                        <article class="icon mif-dollars"></article>
+                    </section>
+                    <article class="tile-label">RH Online</article>
+                </a>
+                
+                <a href="https://cmnet.webex.com/webappng/sites/cmnet/dashboard?siteurl=cmnet" class="tile bg-darkCyan fg-white" target="_blank">
+                    <div class="tile-content iconic">
+                        <article class="icon mif-location-city"></article>
+                    </div>
+                    <article class="tile-label">Totvs Webex</article>
+                </a>
+                
+                <a href="https://preview.web.skype.com/" class="tile bg-darkCyan fg-white" target="_blank">
+                    <section class="tile-content iconic">
+                        <article class="icon mif-skype"></article>
+                    </section>
+                    <article class="tile-label">Skype Web</article>
+                </a>
+                
+                <a href="/totem/doc/docpdv/ura.png" class="tile bg-darkCyan fg-white" target="_blank">
+                    <section class="tile-content iconic">
+                        <article class="icon mif-anchor"></article>
+                    </section>
+                    <article class="tile-label">Ura</article>
+                </a>
+                
+            </section>
+        </section>
+        
+        <section class="tile-group four">
+            <article class="tile-group-title fg-grayed">Planilhas</article>
+            <section class="tile-container">
+                
+                <a href="https://docs.google.com/spreadsheets/d/1nrlRB_eUqfi6sDPBNtch-oFH4hUKkA5Otx0K9e-xgV0/edit#gid=0" class="tile bg-darkCyan fg-white" target="_blank">
+                    <section class="tile-content iconic">
+                        <article class="icon mif-users"></article>
+                    </section>
+                    <article class="tile-label">Clientes Sem Cadastro</article>
+                </a>
+                
+                <a href="https://docs.google.com/spreadsheets/d/1ItaKU5Ba7filOkS__ijYDhbb1l-RrSXpLqLcuRbLMMA/edit#gid=1919277325" class="tile bg-darkCyan fg-white" target="_blank">
+                    <section class="tile-content iconic">
+                        <article class="icon mif-calendar"></article>
+                    </section>
+                    <article class="tile-label">Escala</article>
+                </a>
+                
+                <a href="https://docs.google.com/spreadsheets/d/1ItaKU5Ba7filOkS__ijYDhbb1l-RrSXpLqLcuRbLMMA/edit#gid=1919277325" class="tile bg-darkCyan fg-white" target="_blank">
+                    <section class="tile-content iconic">
+                        <article class="icon mif-layers"></article>
+                    </section>
+                    <article class="tile-label">Testes PDV OP</article>
+                </a>
+                
+                <a href="https://docs.google.com/spreadsheets/d/17sF7oTz29YfE8iFPhkvGjIVF6iWGc0J6te3zgI3tIcI/edit#gid=0" class="tile bg-darkCyan fg-white" target="_blank">
+                    <section class="tile-content iconic">
+                        <article class="icon mif-chart-line"></article>
+                    </section>
+                    <article class="tile-label">Indicadores</article>
+                </a>
+                
+                <a href="https://docs.google.com/spreadsheets/d/1-DKx_1nDE-NyBN62W2gLsN-9bHrzS0G1QY8QlaRgZ9U/edit?ts=5c6e9dec#gid=364808048" class="tile bg-darkCyan fg-white" target="_blank">
+                    <section class="tile-content iconic">
+                        <article class="icon mif-bug"></article>
+                    </section>
+                    <article class="tile-label">Bug's New</article>
+                </a>
+                
+                <a href="https://docs.google.com/spreadsheets/d/1rGregOlSSUi-S6kMuU3lf7R5_llvkFopFGUY83Pq8Ok/edit#gid=957543373" class="tile bg-darkCyan fg-white" target="_blank">
+                    <section class="tile-content iconic">
+                        <article class="icon mif-list"></article>
+                    </section>
+                    <article class="tile-label">CRM Clientes</article>
+                </a>
+                 
+                <a href="https://docs.google.com/spreadsheets/d/1OUg2eNo6mx6yeSbH3Y0Ps9Nh6s5dXwIHOTzVznLgCBk/edit#gid=295119096" class="tile bg-darkCyan fg-white" target="_blank">
+                    <section class="tile-content iconic">
+                        <article class="icon mif-table"></article>
+                    </section>
+                    <article class="tile-label">Geral Processos</article>
+                </a>
+
+                <a href="https://docs.google.com/spreadsheets/d/1Icephv3oBRDfhjjPMI_u5ixVijtiy6zRH0QynBo0wTA/edit#gid=1570546609" class="tile bg-darkCyan fg-white" target="_blank">
+                    <section class="tile-content iconic">
+                        <article class="icon mif-anchor"></article>
+                    </section>
+                    <article class="tile-label">Clientes</article>
+                </a>
+               
+                <a href="/totem/doc/docpdv/suporte-nao-atende.htm" class="tile bg-darkCyan fg-white" target="_blank">
+                    <section class="tile-content iconic">
+                        <article class="icon mif-phonelink-off"></article>
+                    </section>
+                    <article class="tile-label">Atlântica: Não suportados</article>
+                </a>
+                
+                <a href="https://docs.google.com/spreadsheets/d/1UVp8RLdI8ngor9S3sl4uiTDMWhooCIvlvQrf50yw2Rk/edit#gid=908844163" class="tile bg-darkCyan fg-white" target="_blank">
+                    <section class="tile-content iconic">
+                        <article class="icon mif-equalizer"></article>
+                    </section>
+                    <article class="tile-label">Dashboard</article>
+                </a>
+                
+                <a href="https://docs.google.com/spreadsheets/d/1OUg2eNo6mx6yeSbH3Y0Ps9Nh6s5dXwIHOTzVznLgCBk/edit#gid=1328421909" class="tile bg-darkCyan fg-white" target="_blank">
+                    <section class="tile-content iconic">
+                        <article class="icon mif-phone"></article>
+                    </section>
+                    <article class="tile-label">Suporte Corporativo</article>
+                </a>
+                
+                <a href="https://groups.google.com/a/totvs.com.br/d/forum/hospitality.suporte" class="tile bg-darkCyan fg-white" target="_blank">
+                    <section class="tile-content iconic">
+                        <article class="icon mif-feed3"></article>
+                    </section>
+                    <article class="tile-label">Grupo Hospitality</article>
+                </a> 
+                
+            </section>
+        </section>
+        
+        <section class="tile-group four">
+            <article class="tile-group-title fg-grayed">Utilidades</article>
+            <section class="tile-container">
+                
+                <a href="http://nfce.fazenda.mg.gov.br/portalnfce/sistema/consultaarg.xhtml" class="tile bg-darkCyan fg-white" target="_blank">
+                    <section class="tile-content iconic">
+                        <article class="icon mif-file-text"></article>
+                    </section>
+                    <article class="tile-label">Consulta NFC-e MG</article>
+                </a>
+        
+                <a href="https://www.sefaz.rs.gov.br/NFE/NFE-CER.aspx" class="tile bg-darkCyan fg-white" target="_blank">
+                    <section class="tile-content iconic">
+                        <article class="icon mif-download"></article>
+                    </section>
+                    <article class="tile-label">Download XML(SEFAZ)</article>
+                </a>
+                
+                <!--<a href="http://www.nfce.se.gov.br/portal/painelMonitor.jsp" class="tile bg-darkCyan fg-white" target="_blank">
+                    <section class="tile-content iconic">
+                        <article class="icon mif-barcode"></article>
+                    </section>
+                    <section class="tile-label">Status Sefaz</section>
+                </a >-->
+                
+                <!--<a href="https://docs.google.com/spreadsheets/d/1OUg2eNo6mx6yeSbH3Y0Ps9Nh6s5dXwIHOTzVznLgCBk/edit#gid=2090767693" class="tile bg-darkCyan fg-white" target="_blank">
+                    <section class="tile-content iconic">
+                        <article class="icon mif-calculator"></article>
+                    </section>
+                    <article class="tile-label">Posição PAF/UF</article>
+                </a>-->
+                
+                <a href="https://www.sefaz.rs.gov.br/NFE/NFE-VAL.aspx" class="tile bg-darkCyan fg-white" target="_blank">
+                    <section class="tile-content iconic">
+                        <article class="icon mif-file-text"></article>
+                    </section>
+                    <article class="tile-label">Validador XML NFCe</article>
+                </a>
+                
+                <a href="http://bematechpartners.com.br/portalPartners/index.php/suporte-validador-xml-sat/" class="tile bg-darkCyan fg-white" target="_blank">
+                    <section class="tile-content iconic">
+                        <article class="icon mif-file-text"></article>
+                    </section>
+                    <article class="tile-label">Validador XML S@T</article>
+                </a>
+                
+                <a href="http://bematechpartners.com.br/portalPartners/index.php/windows/" class="tile bg-darkCyan fg-white" target="_blank">
+                    <section class="tile-content iconic">
+                        <article class="icon mif-download"></article>
+                    </section>
+                    <article class="tile-label">Downloads Bematech</article>
+                </a>
+                
+                <!--<a href="https://cav.receita.fazenda.gov.br/autenticacao/login" class="tile bg-darkCyan fg-white" target="_blank">
+                    <section class="tile-content iconic">
+                        <article class="icon mif-folder-minus"></article>
+                    </section>
+                    <article class="tile-label">Verif. Certif. Digital</article>
+                </a>-->
+                
+                <a href="https://suporte.totvs.com/portal/p/10098/download#company/" class="tile bg-darkCyan fg-white" target="_blank">
+                    <section class="tile-content iconic">
+                        <article class="icon mif-file-download "></article>
+                    </section>
+                    <article class="tile-label">Download de Versões</article>
+                </a>
+                
+                <a href="http://www.sintegra.gov.br/" class="tile bg-darkCyan fg-white" target="_blank">
+                    <section class="tile-content iconic">
+                        <article class="icon mif-feed"></article>
+                    </section>
+                    <article class="tile-label">Sintegra</article>
+                </a>
+                
+                <!--
+                <a href="/totem/doc/docpdv/versoes/" class="tile bg-darkCyan fg-white" target="_blank">
+                    <section class="tile-content iconic">
+                        <article class="icon mif-download"></article>
+                    </section>
+                     <article class="tile-label"><b>Últimas Versões</b></article>
+                </a> -->
+                
+                <a href="http://cfe.sefaz.ce.gov.br/mfe/servicos#/cupom-fiscal" class="tile bg-darkCyan fg-white" target="_blank">
+                    <section class="tile-content iconic">
+                        <article class="icon mif-file-text"></article>
+                    </section>
+                     <article class="tile-label">Verificador CF-e</article>
+                </a>
+                
+                <a href="https://satsp.fazenda.sp.gov.br/COMSAT/Public/ConsultaPublica/ConsultaPublicaCfe.aspx" class="tile bg-darkCyan fg-white" target="_blank">
+                    <section class="tile-content iconic">
+                        <article class="icon mif-file-text"></article>
+                    </section>
+                    <article class="tile-label">Validador CHAVE S@T</article>
+                </a>
+                
+                <a href="http://nfse.cmnet.com.br/nfse/" class="tile bg-darkCyan fg-white" target="_blank">
+                    <section class="tile-content iconic">
+                        <article class="icon mif-barcode"></article>
+                    </section>
+                    <article class="tile-label">Neo Grid</article>
+                </a>
+                
+                <a href="https://fiscalcloud.bematech.com.br/seguranca/login" class="tile bg-darkCyan fg-white" target="_blank">
+                    <section class="tile-content iconic">
+                        <article class="icon mif-cloud"></article>
+                    </section>
+                    <article class="tile-label">Fiscal Cloud</article>
+                </a>
+                
+                <a href="http://nfse.cmnet.com.br/implantacao/" class="tile bg-darkCyan fg-white" target="_blank">
+                    <section class="tile-content iconic">
+                        <article class="icon mif-tab"></article>
+                    </section>
+                    <article class="tile-label">Team Viewer CMNET</article>
+                </a>
+                
+            </section>
+        </section>
+
+        <section class="tile-group triple">
+        <article class="tile-group-title fg-grayed">Conhecimento</article>
+        <section class= "tile-container">
+
+            <a href="https://docs.google.com/spreadsheets/d/17SST6EfLIze7BDPr9mg7YgVMwTQrjHoN-_-It1Xopwc/edit#gid=1684651233" class="tile bg-darkCyan fg-white" target="_blank">
+                    <section class="tile-content iconic">
+                        <article class="icon mif-file-text"></article>
+                    </section>
+                    <article class="tile-label">Lista KCS</article>
+            </a>
+            
+            <a href="https://docs.google.com/document/d/1fJKkhTllRGYKfAGfKsJjEhi_JaefPc1POq87wDfBetg/edit" class="tile bg-darkCyan fg-white" target="_blank">
+                    <section class="tile-content iconic">
+                        <article class="icon mif-stack"></article>
+                    </section>
+                    <article class="tile-label">Special</article>
+            </a>
+            
+            <a href="https://docs.google.com/document/d/1FHkriSgPAbNBCNQilvmcZ5_1MKbsD1YKi1i9TOlEiGs/edit?usp=sharing" class="tile bg-darkCyan fg-white" target="_blank">
+                    <section class="tile-content iconic">
+                        <article class="icon mif-stack"></article>
+                    </section>
+                    <article class="tile-label">TOTVS PDV</article>
+            </a>
+            
+            <a href="https://docs.google.com/document/d/124MTQlPxeSbf7UEDJpG_0evF24m0kkM8KBl2Dt7OwJs/edit?usp=sharing" class="tile bg-darkCyan fg-white" target="_blank">
+                    <section class="tile-content iconic">
+                        <article class="icon mif-stack"></article>
+                    </section>
+                    <article class="tile-label">Operação</article>
+            </a>
+            
+            <a href="https://docs.google.com/document/d/1U6PvKjCZx4LeLci0wtLS6mxCD8JqBJoWrGTjxNQlnCk/edit?usp=sharing" class="tile bg-darkCyan fg-white" target="_blank">
+                    <section class="tile-content iconic">
+                        <article class="icon mif-stack"></article>
+                    </section>
+                    <article class="tile-label">Config</article>
+            </a>
+            
+            <a href="https://docs.google.com/document/d/15duHsU17nTFbted7KQVluSiaQFXL9eMQqtuTOg9gRP4/edit?usp=sharing" class="tile bg-darkCyan fg-white" target="_blank">
+                    <section class="tile-content iconic">
+                        <article class="icon mif-stack"></article>
+                    </section>
+                    <article class="tile-label">Comanda</article>
+            </a>
+            
+            <a href="https://docs.google.com/document/d/1tZq4YEuQM7tzRPlp8_XKd8FdIBjq016U2cT8R81-APc/edit" class="tile bg-darkCyan fg-white" target="_blank">
+                    <section class="tile-content iconic">
+                        <article class="icon mif-stack"></article>
+                    </section>
+                    <article class="tile-label">PDV Special</article>
+            </a>
+            
+            <a href="http://tdn.totvs.com/display/public/CMNET/How+To" class="tile bg-darkCyan fg-white" target="_blank">
+                    <section class="tile-content iconic">
+                        <article class="icon mif-stack"></article>
+                    </section>
+                    <article class="tile-label">TDN How To</article>
+            </a>
+            
+            <a href="https://centraldeatendimento.totvs.com/hc/pt-br/sections/360000008128-Fiscall-Flex" class="tile bg-darkCyan fg-white" target="_blank">
+                <section class="tile-content iconic">
+                    <article class="icon mif-library"></article>
+                </section>
+                <article class="tile-label">FAQ's Fiscall Flex</article>
+            </a>
+        </section>    
+        </section>
+
+        
+        <section class="tile-group double">
+            <article class="tile-group-title fg-grayed">Documentos & Informativos</article>
+
+            <section class="tile-container">
+                
+                <a href="http://mensageiro.cmnetsolucoes.com.br/default.aspx?AspxAutoDetectCookieSupport=1" class="tile bg-darkCyan fg-white" target="_blank">
+                    <section class="tile-content iconic">
+                        <article class="icon mif-user"></article>
+                    </section>
+                    <article class="tile-label">Site Mensageiro</article>
+                </a>
+
+                <a href="/totem/doc/docpdv/user-mensageiro-special.PDF" class="tile bg-darkCyan fg-white" target="_blank">
+                    <section class="tile-content iconic">
+                        <article class="icon mif-user"></article>
+                    </section>
+                    <article class="tile-label">Logins de Registro Special</article>
+                </a>
+                
+                <a href="/totem/doc/docpdv/user-mensageiro-pdv.PDF" class="tile bg-darkCyan fg-white" target="_blank">
+                    <section class="tile-content iconic">
+                        <article class="icon mif-user"></article>
+                    </section>
+                    <article class="tile-label">Logins de Registro PDV</article>
+                </a>
+                
+                <a href="/totem/doc/docpdv/PDV_RETAGUARDA_SLAVIERO.pdf" class="tile bg-darkCyan fg-white" target="_blank">
+                    <section class="tile-content iconic">
+                        <article class="icon mif-clipboard"></article>
+                    </section>
+                    <article class="tile-label">Retaguarda Slaviero</article>
+                </a>
+                
+                <a href="https://drive.google.com/file/d/1ODEwvcMRxr_qFOoHJfqGc5TT2F-enuFf/view?usp=sharing" class="tile bg-darkCyan fg-white" target="_blank">
+                    <section class="tile-content iconic">
+                        <article class="icon mif-cloud"></article>
+                    </section>
+                    <article class="tile-label">Cloud Slaviero</article>
+                </a>
+                
+                <a href="/totem/doc/docpdv/TOTVS-PDV-e-DFe.pdf" class="tile bg-darkCyan fg-white" target="_blank">
+                    <section class="tile-content iconic">
+                        <article class="icon mif-loop2"></article>
+                    </section>
+                    <article class="tile-label">Teste/Liberação de Aplicativos</article>
+                </a>
+                
+            </section>
+        </section>
+        
+        <section class="tile-group triple">
+            <article class="tile-group-title fg-grayed">Acesso Rápido</article>
+            <section class="tile-container">
+                <a href="https://totvssuporte.zendesk.com/knowledge/articles/new/pt-br?" class="tile bg-darkCyan fg-white" target="_blank">
+                    <section class="tile-content iconic">
+                        <article class="icon mif-library"></article>
+                    </section>
+                    <article class="tile-label"><b>Criação de FAQ</b></article>
+                </a>
+                
+                <a href="https://www.totvs.com/" class="tile bg-darkCyan fg-white" target="_blank">
+                    <section class="tile-content iconic">
+                        <article class="icon mif-organization"></article>
+                    </section>
+                    <article class="tile-label">Totvs</article>
+                </a>
+                
+                <a href="https://www.itau.com.br/" class="tile bg-darkCyan fg-white" target="_blank">
+                    <section class="tile-content iconic">
+                        <article class="icon mif-coins"></article>
+                    </section>
+                    <article class="tile-label">Itaú</article>
+                </a>
+                 
+                <a href="https://centraldeatendimento2.totvs.com/hc/pt-br?flash_digest=11fa02e80c673e54d955cd1eafd11d6122e07363" class="tile bg-darkCyan fg-white" target="_blank">
+                    <section class="tile-content iconic">
+                        <article class="icon mif-organization"></article>
+                    </section>
+                    <article class="tile-label">Adm Gente Chamados</article>
+                </a>
+              
+                <a href="http://salas.totvs.com/" class="tile bg-darkCyan fg-white" target="_blank">
+                    <section class="tile-content iconic">
+                        <article class="icon mif-table"></article>
+                    </section>
+                    <article class="tile-label">Agendamento de Salas</article>
+                </a>
+        
+                <a href="https://totvs.fluigidentity.com/cloudpass/launchpad/launchAppList" class="tile bg-darkCyan fg-white" target="_blank">
+                    <section class="tile-content iconic">
+                        <article class="icon mif-widgets"></article>
+                    </section>
+                    <article class="tile-label">Launch Pad TOTVS</article>
+                </a>
+        
+                <a href="https://pwd.totvs.com.br/accounts/Reset" class="tile bg-darkCyan fg-white" target="_blank">
+                    <section class="tile-content iconic">
+                        <article class="icon mif-registered"></article>
+                    </section>
+                    <article class="tile-label">Reset Senha Gmail TOTVS</article>
+                </a>
+        
+                <a href="https://totvssuporte.zendesk.com/knowledge/lists/default/8/1?brand_id=753138" class="tile bg-darkCyan fg-white" target="_blank">
+                    <section class="tile-content iconic">
+                        <article class="icon mif-widgets"></article>
+                    </section>
+                    <article class="tile-label">KCS já criados</article>
+                </a>
+                
+            </section>
+        </section>      
+    </section>
+</body>
+</html>
